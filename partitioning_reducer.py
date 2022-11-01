@@ -1,25 +1,27 @@
 from collections.abc import Mapping
-from typing import TypeVar, Generic, Callable, TypeAlias
+from typing import TypeVar, Generic, Callable, Iterable
 
 
-def identity(item):
+A = TypeVar('A') # Basic Gen Type
+GK = TypeVar("GK")  # Grouping Key
+RV = TypeVar("RV")  # Reduced Value
+Orig = TypeVar("Orig")  # Original Type
+
+KeyExtractor = Callable[[Orig], GK]
+Reducer = Callable[[RV, Orig], RV]
+Supplier = Callable[[], RV]
+
+
+def identity(item: A) -> A:
     return item
 
 
-def addToList(acc, item):
+def addToList(acc: list[A], item: A) -> list[A]:
     """
     This is necessary instead of just using `list.append` because we need the list to be returned.
     """
     acc.append(item)
     return acc
-
-
-GK = TypeVar("GK")  # Grouping Key
-RV = TypeVar("RV")  # Reduced Value
-Orig = TypeVar("Orig")  # Original Type
-
-KeyExtractor = Callable[[Orig], KV]
-Reducer = Callable[[RV, Orig], RV]
 
 
 class GroupingReducer(Mapping[GK, RV], Generic[Orig, GK, RV]):
